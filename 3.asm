@@ -1,7 +1,8 @@
 DATAS SEGMENT
-	text DB 'Kamisato Ayaka'
-	len DW 14
-	key DW 1,1,4,5,1,4,1,9,1,9,8,1,0,0
+	BUFFER DB 50, ?, 50 dup('$')
+	text DB 50 DUP(?)
+	len DW 114
+	key DW 1,1,4,5,1,4,1,9,1,9,8,1,0,1,1,1,1,1,1,1
 	TEMP DW 514
 	COL DB 0AH ;刷子颜色，0AH是原谅色
 	
@@ -23,6 +24,27 @@ START:
     MOV AX,DATAS
     MOV DS,AX
     ;此处输入代码段代码
+
+
+    lea dx, BUFFER          ;输入字符串
+    mov ah, 0ah
+    int 21h
+;将字符串从缓冲区复制出来，因为BUFFER的开头两个字节是不使用的
+	MOV SI,0
+	MOV CX,LEN
+COPY:
+	MOV AH,BUFFER[SI+2]
+;字符串在BUFFER中以$结尾，所以检测到$就跳出循环
+	CMP AH,'$'
+	JE BREAK
+	MOV TEXT[SI],AH
+	INC SI
+	LOOP COPY
+BREAK:
+;将循环次数写入LEN变量，表示字符串长度
+	MOV LEN,SI
+	
+
 
 ;直接写显存法定义颜色信息
     MOV AX, 0B800H
@@ -65,7 +87,6 @@ PRIN:
     MOV  DL,0AH
     MOV  AH,02H
     INT  21H
-    ;显示换行符
     
     
 ;计算密文
@@ -145,7 +166,6 @@ PRIN2:
     MOV  DL,0AH
     MOV  AH,02H
     INT  21H
-    ;显示换行符
 	
 ;程序终止	
     MOV AH,4CH
@@ -153,5 +173,7 @@ PRIN2:
 
 CODES ENDS
     END START
+
+
 
 
