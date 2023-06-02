@@ -2,7 +2,7 @@ DATAS SEGMENT
 	BUFFER DB 50, ?, 50 dup('$')
 	text DB 50 DUP(?)
 	len DW 114
-	key DW 1,1,4,5,1,4,1,9,1,9,8,1,0,1,1,1,1,1,1,1
+	key DW -1,-1,4,5,1,4,1,9,1,9,8,1,0,1,1,1,1,1,1,1
 	TEMP DW 514
 	COL DB 0AH ;刷子颜色，0AH是原谅色
 	
@@ -100,7 +100,18 @@ EN:
 	ADD DI,2
 	MOV TEMP,CX
 	MOV CL,DL
-	ROR AL,CL
+	
+	CMP CL,0
+	JL L
+	JMP R
+	L:
+		NEG CL
+		ROL AL,CL
+		JMP CONTINUE
+	R:
+		ROR AL,CL
+	CONTINUE:
+		
 	XCHG [SI],AX
 	ADD SI,1
 	ADD BX,1
@@ -139,7 +150,18 @@ EN2:
 	ADD DI,2
 	MOV TEMP,CX
 	MOV CL,DL
-	ROL AL,CL
+	
+	CMP CL,0
+	JL L1
+	JMP R1
+	L1:
+		NEG CL
+		ROR AL,CL
+		JMP CONTINUE1
+	R1:
+		ROL AL,CL
+	CONTINUE1:
+	
 	XCHG [SI],AX
 	ADD SI,1
 	ADD BX,1
